@@ -26,7 +26,7 @@ export default function App() {
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <CategorySelect />
+        <Register />
       </ThemeProvider>
     );
   }
