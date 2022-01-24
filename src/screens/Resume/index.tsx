@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RFValue } from "react-native-responsive-fontsize";
-import { useTheme } from "styled-components";
 import { categories } from "../../utils/categories";
 
 import { VictoryPie } from "victory-native";
@@ -33,7 +33,6 @@ interface CategoryData {
 }
 
 export function Resume() {
-	const theme = useTheme()
 
 	const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([])
 
@@ -85,7 +84,13 @@ export function Resume() {
 
 	useEffect(() => {
 		loadData()
-	}, [totalByCategories])
+	}, [])
+	
+	useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [])
+  )
 
 	return (
 		<Container>
