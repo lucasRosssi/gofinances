@@ -28,8 +28,11 @@ interface FormData {
 }
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('Informe um nome'),
-  amount: Yup.number()
+  name: Yup
+		.string()
+		.required('Informe um nome'),
+  amount: Yup
+		.number()
     .typeError('Informe um valor')
     .positive('O valor deve ser positivo')
     .required('Informe um valor'),
@@ -88,7 +91,7 @@ export function Register() {
       const data = await AsyncStorage.getItem(dataKey)
       const currentData = data ? JSON.parse(data) : []
 
-      const dataFormatted = [...currentData, newTransaction]
+      const dataFormatted = [newTransaction, ...currentData]
 
       await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted))
 
