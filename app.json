@@ -2,6 +2,8 @@
   "expo": {
     "name": "gofinances",
     "slug": "gofinances",
+		"scheme": "gofinances",
+		"owner": "lucas.rosssi",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
