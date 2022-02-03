@@ -16,6 +16,9 @@ import {
 } from '@expo-google-fonts/poppins'
 
 import { AppRoutes } from './src/routes/app.routes'
+import { StatusBar } from 'react-native'
+import { SignIn } from './src/screens/SignIn'
+import { AuthProvider } from './src/hooks/auth'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -30,7 +33,11 @@ export default function App() {
     return (
       <ThemeProvider theme={theme}>
         <NavigationContainer>
-          <AppRoutes />
+					<StatusBar barStyle={'light-content'} translucent  backgroundColor={theme.colors.primary}/>
+
+					<AuthProvider>
+          	<SignIn />
+					</AuthProvider>
         </NavigationContainer>
       </ThemeProvider>
     )
