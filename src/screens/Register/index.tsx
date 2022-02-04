@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from 'react-native'
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -7,7 +7,9 @@ import uuid from 'react-native-uuid'
 
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'react-hook-form'
+import { useAuth } from '../../hooks/auth'
 
+import Modal from 'react-native-modal'
 import { InputForm } from '../../components/Forms/InputForm'
 import { Button } from '../../components/Forms/Button'
 import { TransactionTypeButton } from '../../components/Forms/TransactionTypeButton'
@@ -45,6 +47,8 @@ export function Register() {
     key: 'category',
     name: 'Categoria',
   })
+
+	const { user } = useAuth()
 
   const {
     control,
@@ -87,7 +91,7 @@ export function Register() {
     }
 
     try {
-      const dataKey = '@gofinances:transactions'
+      const dataKey = `@gofinances:transactions_user:${user.id}`
       const data = await AsyncStorage.getItem(dataKey)
       const currentData = data ? JSON.parse(data) : []
 
@@ -160,7 +164,12 @@ export function Register() {
           <Button title="Enviar" onPress={handleSubmit(handleRegister)} />
         </Form>
 
-        <Modal visible={categoryModalOpen}>
+        <Modal
+					isVisible={categoryModalOpen}
+					onBackButtonPress={handleCloseSelectCategoryModal}
+					onBackdropPress={handleCloseSelectCategoryModal}
+					style={{ margin: 0, justifyContent: 'flex-end', alignItems: 'center' }}			
+				>
           <CategorySelect
             category={category}
             setCategory={setCategory}
