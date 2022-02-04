@@ -27,6 +27,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components'
+import { useAuth } from '../../hooks/auth'
 
 export interface DataListProps extends TransactionCardProps {
   id: string
@@ -49,11 +50,17 @@ export function Dashboard() {
   const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData)
 		
 	const theme = useTheme()
+	const { user, signOut } = useAuth()
 
 	function getLastTransactionDate(collection: DataListProps[], type: 'positive' | 'negative') {
+		const collectionFiltered = collection.filter(transaction => transaction.type === type)
+
+		if(collectionFiltered.length === 0) {
+			return 0
+		}
+
 		const lastTransaction = new Date(Math.max.apply(
-      Math, collection
-        .filter((transaction: DataListProps) => transaction.type === type)
+      Math, collectionFiltered
         .map((transaction: DataListProps) => new Date(transaction.date).getTime())))
 
     return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', {
@@ -62,7 +69,7 @@ export function Dashboard() {
 	}
 
   async function loadTransactions() {
-    const dataKey = '@gofinances:transactions'
+    const dataKey = `@gofinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
     const transactions = response ? JSON.parse(response) : []
 
@@ -101,7 +108,9 @@ export function Dashboard() {
 
 		const lastEntriesTransaction = getLastTransactionDate(transactions, 'positive')
 		const lastExpensesTransaction = getLastTransactionDate(transactions, 'negative')
-		const totalInterval = `01 a ${lastExpensesTransaction > lastEntriesTransaction ? lastExpensesTransaction : lastEntriesTransaction}`
+		const totalInterval = lastExpensesTransaction === 0 && lastEntriesTransaction === 0
+		? ''
+		: `Última transação dia ${lastExpensesTransaction > lastEntriesTransaction ? lastExpensesTransaction : lastEntriesTransaction}`
 
     let total = entries - expenses
 
@@ -111,14 +120,18 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL',
         }),
-				lastTransaction: `Última entrada dia ${lastEntriesTransaction}`
+				lastTransaction: lastEntriesTransaction === 0
+				? ''
+				: `Última entrada dia ${lastEntriesTransaction}`
       },
       expenses: {
         amount: expenses.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         }),
-				lastTransaction: `Última saída dia ${lastExpensesTransaction}`
+				lastTransaction: lastExpensesTransaction === 0
+				? ''
+				: `Última saída dia ${lastExpensesTransaction}`
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
@@ -147,14 +160,14 @@ export function Dashboard() {
       <Header>
         <UserWrapper>
           <UserInfo>
-            <Photo source={{ uri: 'https://github.com/lucasRosssi.png' }} />
+            <Photo source={{ uri: user.photo }} />
             <User>
               <UserGreeting>Olá,</UserGreeting>
-              <UserName>Lucas</UserName>
+              <UserName>{user.name}</UserName>
             </User>
           </UserInfo>
 
-          <LogoutButton onPress={() => {}}>
+          <LogoutButton onPress={signOut}>
             <Icon name="power" />
           </LogoutButton>
         </UserWrapper>
