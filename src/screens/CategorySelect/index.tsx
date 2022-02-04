@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
+import { useTheme } from "styled-components";
 
 import { Button } from "../../components/Forms/Button";
 
@@ -32,6 +33,8 @@ export function CategorySelect({
     setCategory,
     closeSelectCategory
  }: Props) {
+	const theme = useTheme()
+
     function handleCategorySelect(category: Category) {
         setCategory(category)
     }
@@ -49,13 +52,20 @@ export function CategorySelect({
             renderItem={({ item }) => (
                 <Category
                     onPress={() => handleCategorySelect(item)}
-                    isActive={category.key === item.key}
+										style={{ backgroundColor: category.key === item.key ? item.color : theme.colors.background }}
                 >
-                    <Icon name={item.icon} />
-                    <Name>{item.name}</Name>
+                    <Icon name={item.icon} color={category.key === item.key ? theme.colors.shape : theme.colors.text_dark} />
+                    <Name
+											style={{
+												color: category.key === item.key ? theme.colors.shape : theme.colors.text_dark
+											}}
+										>
+											{item.name}
+										</Name>
                 </Category>
             )}
             ItemSeparatorComponent={() => <Separator />}
+						showsVerticalScrollIndicator={false}
         />
 
         <Footer>
