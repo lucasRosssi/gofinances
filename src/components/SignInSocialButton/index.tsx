@@ -12,17 +12,15 @@ import {
 interface Props extends RectButtonProps {
 	title: string,
 	svg: React.FC<SvgProps>,
-	onPress: () => void
 }
 
 export function SignInSocialButton({
 	title,
 	svg: Svg,
-	onPress,
 	...rest
 }: Props) {
 	return (
-		<Container onPress={onPress}>
+		<Container {...rest}>
 			<ImageContainer>
 				<Svg />
 			</ImageContainer>
