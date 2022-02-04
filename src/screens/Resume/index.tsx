@@ -1,13 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RFValue } from "react-native-responsive-fontsize";
 import { categories } from "../../utils/categories";
+import { addMonths, subMonths, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+import { useAuth } from "../../hooks/auth";
+import { useTheme } from "styled-components";
 
 import { VictoryPie } from "victory-native";
 import { HistoryCard } from "../../components/HistoryCard";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { addMonths, subMonths, format } from "date-fns";
+import { ActivityIndicator } from "react-native";
 
 import {
 	Container,
@@ -21,9 +26,6 @@ import {
 	Month,
 	LoadingContainer
 } from "./styles";
-import { ptBR } from "date-fns/locale";
-import { useTheme } from "styled-components";
-import { ActivityIndicator } from "react-native";
 
 interface TransactionData {
 	type: 'positive' | 'negative'
@@ -44,6 +46,7 @@ interface CategoryData {
 
 export function Resume() {
 	const theme = useTheme()
+	const { user } = useAuth()
 
 	const [isLoading, setIsLoading] = useState(true)
 	const [selectedDate, setSelectedDate] = useState(new Date())
@@ -61,7 +64,7 @@ export function Resume() {
 	async function loadData() {
 		setIsLoading(true)
 		
-		const dataKey = '@gofinances:transactions'
+		const dataKey = `@gofinances:transactions_user:${user.id}`
 		const response = await AsyncStorage.getItem(dataKey)
 		const responseFormatted = response ? JSON.parse(response) : []
 
@@ -160,11 +163,11 @@ export function Resume() {
 								colorScale={totalByCategories.map(category => category.color)}
 								style={{
 									labels: {
-										fontSize: RFValue(18),
+										fontSize: RFValue(17),
 										fontWeight: 'bold',
 									}
 								}}
-								labelRadius={0}
+								labelRadius={130}
 								x="percent"
 								y="total"
 								width={RFValue(330)}
