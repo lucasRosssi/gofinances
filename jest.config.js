@@ -7,5 +7,8 @@ module.exports = {
 		'/public',
 		'/.expo',
 	],
-	setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
+	setupFilesAfterEnv: [
+		'@testing-library/jest-native/extend-expect',
+		'jest-styled-components',
+	],
 };
